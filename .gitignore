@@ -1,2 +1,9 @@
 node_modules/
+
 info.md
+
+.env
+
+logicApp/
+
+google_api_credentials/
