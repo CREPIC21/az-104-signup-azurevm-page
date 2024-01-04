@@ -1,12 +1,53 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {},
+    "parameters": {
+        "virtualNetwork_name": {
+            "defaultValue": "SignUpVnet",
+            "type": "String"
+        },
+        "virtualNetworkSubnet_name": {
+            "defaultValue": "SignUpSubnet",
+            "type": "String"
+        },
+        "nsg_name": {
+            "defaultValue": "SignUpNsg",
+            "type": "String"
+        },
+        "publicIP_name": {
+            "defaultValue": "SignUpIp",
+            "type": "String"
+        },
+        "nic_name": {
+            "defaultValue": "SignUpNic",
+            "type": "String"
+        },
+        "vm_name": {
+            "defaultValue": "SignUpVm",
+            "type": "String"
+        },
+        "vm_computerName": {
+            "defaultValue": "VmComputerName",
+            "type": "String"
+        },
+        "vm_adminUsername": {
+            "defaultValue": "SignUpAdmin",
+            "type": "String"
+        },
+        "vm_adminPassword": {
+            "defaultValue": "SignUpPass01",
+            "type": "String"
+        },
+        "vm_osDisk_name": {
+            "defaultValue": "SignUpOsDisk",
+            "type": "String"
+        }
+    },
     "functions": [],
     "variables": {},
     "resources": [
         {
-            "name": "ip-01",
+            "name": "[parameters('publicIP_name')]",
             "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2023-04-01",
             "location": "[resourceGroup().location]",
@@ -18,12 +59,12 @@
             }
         },
         {
-            "name": "nic-01",
+            "name": "[parameters('nic_name')]",
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2023-04-01",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIPAddresses', 'ip-01')]"
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIP_name'))]"
             ],
             "properties": {
                 "ipConfigurations": [
@@ -32,35 +73,35 @@
                         "properties": {
                             "privateIPAllocationMethod": "Dynamic",
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'appnetwork', 'SignUpSubnet')]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetwork_name'), parameters('virtualNetworkSubnet_name'))]"
                             },
                             "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', 'ip-01')]"
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIP_name'))]"
                             }
                         }
                     }
                 ],
                 "networkSecurityGroup": {
-                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'nsg-01')]"
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsg_name'))]"
                 }
             }
         },
         {
-            "name": "vm-01",
+            "name": "[parameters('vm_name')]",
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2023-03-01",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces', 'nic-01')]"
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('nic_name'))]"
             ],
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "Standard_D2s_v3"
                 },
                 "osProfile": {
-                    "computerName": "",
-                    "adminUsername": "",
-                    "adminPassword": ""
+                    "computerName": "[parameters('vm_computerName')]",
+                    "adminUsername": "[parameters('vm_adminUsername')]",
+                    "adminPassword": "[parameters('vm_adminPassword')]"
                 },
                 "storageProfile": {
                     "imageReference": {
@@ -70,7 +111,7 @@
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "windowsVM1OSDisk",
+                        "name": "[parameters('vm_osDisk_name')]",
                         "caching": "ReadWrite",
                         "createOption": "FromImage"
                     }
@@ -78,7 +119,7 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', 'nic-01')]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('nic_name'))]"
                         }
                     ]
                 },
