@@ -54,6 +54,78 @@
         "administratorLoginPassword": {
             "type": "secureString",
             "defaultValue": "Testpass1!"
+        },
+        "name": {
+            "type": "string",
+            "defaultValue": "signupazvm"
+        },
+        "hostingPlanName": {
+            "type": "string",
+            "defaultValue": "signupazvm-plan"
+        },
+        "alwaysOn": {
+            "type": "bool",
+            "defaultValue": true
+        },
+        "ftpsState": {
+            "type": "string",
+            "defaultValue": "FtpsOnly"
+        },
+        "sku": {
+            "type": "string",
+            "defaultValue": "Standard"
+        },
+        "skuCode": {
+            "type": "string",
+            "defaultValue": "S1"
+        },
+        "workerSize": {
+            "type": "string",
+            "defaultValue": "1"
+        },
+        "workerSizeId": {
+            "type": "string",
+            "defaultValue": "0"
+        },
+        "numberOfWorkers": {
+            "type": "string",
+            "defaultValue": "0"
+        },
+        "currentStack": {
+            "type": "string",
+            "defaultValue": "node"
+        },
+        "phpVersion": {
+            "type": "string",
+            "defaultValue": "OFF"
+        },
+        "nodeVersion": {
+            "type": "string",
+            "defaultValue": "~18"
+        },
+        "repoUrl": {
+            "type": "string",
+            "defaultValue": "https://github.com/CREPIC21/az-104-signup-azurevm-page"
+        },
+        "branch": {
+            "type": "string",
+            "defaultValue": "main"
+        },
+        "logicAppName": {
+            "type": "string",
+            "defaultValue": "signupazvmlogicapp"
+        },
+        "logicAppDefinition": {
+            "type": "string",
+            "defaultValue": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#"
+        },
+        "logicAppParameters": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "logicAppState": {
+            "type": "string",
+            "defaultValue": "Enabled"
         }
     },
     "functions": [],
@@ -200,6 +272,91 @@
             "dependsOn": [
                 "[resourceId('Microsoft.Sql/servers', parameters('serverName'))]"
             ]
+        },
+        {
+            "apiVersion": "2018-11-01",
+            "name": "[parameters('name')]",
+            "type": "Microsoft.Web/sites",
+            "location": "[resourceGroup().location]",
+            "tags": {},
+            "dependsOn": [
+                "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
+            ],
+            "properties": {
+                "name": "[parameters('name')]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                            "value": "[parameters('nodeVersion')]"
+                        }
+                    ],
+                    "metadata": [
+                        {
+                            "name": "CURRENT_STACK",
+                            "value": "[parameters('currentStack')]"
+                        }
+                    ],
+                    "phpVersion": "[parameters('phpVersion')]",
+                    "nodeVersion": "[parameters('nodeVersion')]",
+                    "alwaysOn": "[parameters('alwaysOn')]",
+                    "ftpsState": "[parameters('ftpsState')]"
+                },
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]",
+                "clientAffinityEnabled": true,
+                "virtualNetworkSubnetId": null,
+                "httpsOnly": true,
+                "publicNetworkAccess": "Enabled"
+            },
+            "resources": [
+                {
+                    "type": "sourcecontrols",
+                    "name": "web",
+                    "apiVersion": "2020-12-01",
+                    "properties": {
+                        "RepoUrl": "[parameters('repoUrl')]",
+                        "branch": "[parameters('branch')]",
+                        "IsManualIntegration": false,
+                        "isMercurial": false
+                    },
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Web/Sites', parameters('name'))]"
+                    ]
+                }
+            ]
+        },
+        {
+            "apiVersion": "2020-12-01",
+            "name": "[parameters('hostingPlanName')]",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[resourceGroup().location]",
+            "kind": "",
+            "tags": {},
+            "dependsOn": [],
+            "properties": {
+                "name": "[parameters('hostingPlanName')]",
+                "workerSize": "[parameters('workerSize')]",
+                "workerSizeId": "[parameters('workerSizeId')]",
+                "numberOfWorkers": "[parameters('numberOfWorkers')]",
+                "zoneRedundant": false
+            },
+            "sku": {
+                "Tier": "[parameters('sku')]",
+                "Name": "[parameters('skuCode')]"
+            }
+        },
+        {
+            "apiVersion": "2016-10-01",
+            "name": "[parameters('logicAppName')]",
+            "type": "Microsoft.Logic/workflows",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "definition": {
+                    "$schema": "[parameters('logicAppDefinition')]"
+                },
+                "parameters": "[parameters('logicAppParameters')]",
+                "state": "[parameters('logicAppState')]"
+            }
         }
     ],
     "outputs": {
