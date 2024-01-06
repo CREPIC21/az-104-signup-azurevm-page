@@ -1,3 +1,5 @@
+require('dotenv').config(); // Load environment variables from .env file
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const sql = require('mssql');
@@ -7,10 +9,10 @@ const app = express();
 
 // Azure SQL database configuration
 const config = {
-    user: '',
-    password: '',
-    server: '',
-    database: '',
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    server: process.env.DB_SERVER,
+    database: process.env.DB_NAME,
     port: 1433,
     options: {
         encrypt: true, // For secure Azure SQL connection
@@ -19,10 +21,10 @@ const config = {
 };
 
 // connection string to your Service Bus namespace
-const connectionString = ''
+const connectionString = process.env.SERVICE_BUS_CONNECTION_STRING
 
 // name of the queue
-const queueName = ''
+const queueName = process.env.SERVICE_BUS_QUEUE_NAME
 
 // access to static files - css, images
 app.use(express.static('public'));
@@ -31,7 +33,7 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/signup.html')
+    res.sendFile(__dirname + '/index.html')
 });
 
 app.post('/', async function (req, res) {

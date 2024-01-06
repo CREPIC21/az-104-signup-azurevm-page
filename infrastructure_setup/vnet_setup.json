@@ -1,0 +1,224 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualNetwork_name": {
+            "defaultValue": "SignUpVnet",
+            "type": "String"
+        },
+        "virtualNetworkSubnet_name": {
+            "defaultValue": "SignUpSubnet",
+            "type": "String"
+        },
+        "nsg_name": {
+            "defaultValue": "SignUpNsg",
+            "type": "String"
+        },
+        "storageAccountName": {
+            "type": "string",
+            "defaultValue": "signupazvmstg"
+        },
+        "storageAccountType": {
+            "type": "string",
+            "defaultValue": "Standard_LRS"
+        },
+        "storageAccountKind": {
+            "type": "string",
+            "defaultValue": "StorageV2"
+        },
+        "containerName": {
+            "type": "string",
+            "defaultValue": "templates"
+
+        },
+        "serviceBusName": {
+            "defaultValue": "signupvmservicebustest",
+            "type": "String"
+        },
+        "serviceBusQueueName": {
+            "defaultValue": "signupqueue",
+            "type": "String"
+        },
+        "serverName": {
+            "type": "string",
+            "defaultValue": "signupserver"
+        },
+        "sqlDBName": {
+            "type": "string",
+            "defaultValue": "SignUpDB"
+        },
+        "administratorLogin": {
+            "type": "string",
+            "defaultValue": "adminuser"
+        },
+        "administratorLoginPassword": {
+            "type": "secureString",
+            "defaultValue": "Testpass1!"
+        }
+    },
+    "functions": [],
+    "variables": {},
+    "resources": [
+        {
+            "name": "[parameters('virtualNetwork_name')]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2021-08-01",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsg_name'))]"
+            ],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.0.0.0/16"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[parameters('virtualNetworkSubnet_name')]",
+                        "properties": {
+                            "addressPrefix": "10.0.0.0/24",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsg_name'))]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[parameters('nsg_name')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2023-04-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "Allow-RDP",
+                        "properties": {
+                            "description": "Allow RDP",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "3389",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2022-05-01",
+            "name": "[parameters('storageAccountName')]",
+            "location": "[resourceGroup().location]",
+            "kind": "[parameters('storageAccountKind')]",
+            "sku": {
+                "name": "[parameters('storageAccountType')]"
+            },
+            "properties": {
+                "supportsHttpsTrafficOnly": true,
+                "defaultToOAuthAuthentication": false,
+                "allowBlobPublicAccess": true
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2022-05-01",
+            "name": "[format('{0}/default/{1}', parameters('storageAccountName'), parameters('containerName'))]",
+            "properties": {
+                "publicAccess": "Blob"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[parameters('serviceBusName')]",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard"
+            },
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.ServiceBus/namespaces/queues",
+            "apiVersion": "2022-10-01-preview",
+            "name": "[concat(parameters('serviceBusName'), '/signupqueue')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusName'))]"
+            ],
+            "properties": {
+                "lockDuration": "PT5M",
+                "maxSizeInMegabytes": 1024,
+                "defaultMessageTimeToLive": "P10675199DT2H48M5.4775807S",
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "maxDeliveryCount": 10,
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S"
+            }
+        },
+        {
+            "type": "Microsoft.Sql/servers",
+            "apiVersion": "2022-05-01-preview",
+            "name": "[parameters('serverName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "administratorLogin": "[parameters('administratorLogin')]",
+                "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+                "publicNetworkAccess": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.Sql/servers/databases",
+            "apiVersion": "2022-05-01-preview",
+            "name": "[format('{0}/{1}', parameters('serverName'), parameters('sqlDBName'))]",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "GP_S_Gen5",
+                "tier": "GeneralPurpose",
+                "family": "Gen5",
+                "capacity": 1
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', parameters('serverName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Sql/servers/firewallRules",
+            "apiVersion": "2021-02-01-preview",
+            "name": "[format('{0}/{1}', parameters('serverName'), 'AllowCurrentIPAndAzureServices')]",
+            "properties": {
+                "endIpAddress": "91.232.46.35",
+                "startIpAddress": "91.232.46.35",
+                "azureServicesAllowed": true
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', parameters('serverName'))]"
+            ]
+        }
+    ],
+    "outputs": {
+        "storageAccountNameOutput": {
+            "type": "string",
+            "value": "[parameters('storageAccountName')]"
+        },
+        "containerNameOutput": {
+            "type": "string",
+            "value": "[parameters('containerName')]"
+        },
+        "primaryConnectionString": {
+            "type": "string",
+            "value": "[listKeys(resourceId('Microsoft.ServiceBus/namespaces/AuthorizationRules', parameters('serviceBusName'), 'RootManageSharedAccessKey'), '2022-10-01-preview').primaryConnectionString]"
+
+        },
+        "queueName": {
+            "type": "string",
+            "value": "[parameters('serviceBusQueueName')]"
+        }
+    }
+}
