@@ -10,10 +10,6 @@
             "defaultValue": "SignUpSubnet",
             "type": "String"
         },
-        "nsg_name": {
-            "defaultValue": "SignUpNsg",
-            "type": "String"
-        },
         "publicIP_name": {
             "defaultValue": "SignUpIp",
             "type": "String"
@@ -80,10 +76,7 @@
                             }
                         }
                     }
-                ],
-                "networkSecurityGroup": {
-                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('nsg_name'))]"
-                }
+                ]
             }
         },
         {
