@@ -116,10 +116,21 @@ app.post('/', async function (req, res) {
     }
 });
 
+app.get('/failure', function (req, res) {
+    res.sendFile(__dirname + '/failure.html')
+});
+
 app.post('/failure', function (req, res) {
     res.redirect('/');
 });
 
+app.get('/success', function (req, res) {
+    res.sendFile(__dirname + '/success.html')
+});
+
+app.get('/alreadySubscribed', function (req, res) {
+    res.sendFile(__dirname + '/alreadySubscribed.html')
+});
 
 app.listen(process.env.PORT || 3000, function () {
     console.log('Server running on port 3000.')
