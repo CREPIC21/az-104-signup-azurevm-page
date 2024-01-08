@@ -56,8 +56,10 @@
       <h1 class="h3 mb-3 fw-normal">Signup for Azure VM</h1>
 
 
-      <input type="text" class="form-control top" placeholder="First Name" name="firstName" required autofocus>
-      <input type="text" class="form-control middle" placeholder="Last Name" name="lastName" required autofocus>
+      <input type="text" class="form-control top" placeholder="First Name" name="firstName" required autofocus
+        maxlength="15" pattern="[A-Za-z]+" title="Only alphabetic characters allowed">
+      <input type="text" class="form-control middle" placeholder="Last Name" name="lastName" required autofocus
+        maxlength="15" pattern="[A-Za-z]+" title="Only alphabetic characters allowed">
       <input type="email" class="form-control bottom" placeholder="Email" name="email" required>
       <button class="w-100 btn btn-lg btn-primary signup-btn" type="submit">Sign Me Up</button>
       <p class="mt-5 mb-3 text-muted copy">&copy; Danijel's Signups</p>
