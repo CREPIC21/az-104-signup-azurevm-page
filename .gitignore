@@ -1,11 +1,7 @@
 node_modules/
-
-info.md
-
 .env
-
-logicApp/
-
 google_api_credentials/
 
-diagram_excalidrawFile.excalidraw
+info.md
+logicApp/
+diagrams/diagram_excalidrawFile.excalidraw
