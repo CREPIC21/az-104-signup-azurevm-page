@@ -3,18 +3,18 @@ This project enables users to sign up for an Azure Windows VM by providing their
 The workflow involves several components deployed on Azure, including a Virtual Network, Network Security Group, Web App service, Azure SQL Database, Service Bus, Azure Logic App, Storage Account and ARM templates for VM deployment.
 
 ## Project Flow
-1. User Signup for Windows Azure VM on Website
+### 1. User Signup for Windows Azure VM on Website
 - Users enter their first name, last name, and email on a website form
 - Clicking the signup button triggers the signup process
 - The front end is deployed using Azure Web App Service to collect user information
 
-2. JavaScript Functions
+### 2. JavaScript Functions
 - Takes the entered user details (first name, last name, email)
 - Creates a new entry in the Azure SQL Database if the user with provided email doesn't exist already
 - Updates the SQL database with the new user information
 - After updating the SQL database, a JavaScript function sends a message to the Service Bus message queue.
 
-3. Azure Logic App Functionality
+### 3. Azure Logic App Functionality
 - Triggered upon receiving a message in the Service Bus queue
 - Workflow:
   - Updates the ARM template saved in azure storage account blob for Azure VM Windows deployment based on received information
