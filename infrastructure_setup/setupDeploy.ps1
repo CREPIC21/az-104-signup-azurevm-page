@@ -12,12 +12,12 @@ Connect-AzAccount
 # Createing Resource Group with the specified name and location
 New-AzResourceGroup -Name $resourceGroupName -Location $location
 
-# Deploying Vnet, Subnet and NSG 
+# Deploying Vnet, Subnet, NSG, storage account, service bus, SQL server/database, App service plan, web app, logic app
 New-AzResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateVnetSetup -TemplateParameterFile $templateVnetParameters
 
 # Set the storage account context
-$storageAccountName="signupazvmstg"
-$storageAccountNameContainer="templates"
+$storageAccountName = "signupazvmstg"
+$storageAccountNameContainer = "templates"
 $storageAccount = Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName
 $ctx = $storageAccount.Context
 
@@ -29,7 +29,7 @@ Set-AzStorageBlobContent -File $localFilePath -Container $storageAccountNameCont
 
 
 
-################################### FOR TESTING PURPOSES  ########################################################
+################################### FOR TESTING PURPOSES ONLY ########################################################
 # TEST VM DEPLOYMENT
 New-AzResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateFile $templateVMSetup
 
