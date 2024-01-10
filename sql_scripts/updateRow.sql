@@ -1,0 +1,1 @@
+UPDATE SignUps SET VMName = 'vmName' WHERE Email = 'email'

@@ -1,0 +1,17 @@
+Your Azure VM is Ready! -> SUBJECT
+
+
+BODY
+Hi {name},
+
+Your Windows VM is ready.
+
+Use below credentials to login via RDP:
+- username: {username/email}
+- password: {password}
+
+For instructions on how to connect using RDP see below article:
+- How to login via RDP 
+https://learn.microsoft.com/en-us/azure/virtual-machines/windows/connect-rdp
+
+Your VM team 🚀
