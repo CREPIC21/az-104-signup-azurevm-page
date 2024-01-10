@@ -19,6 +19,7 @@ The workflow involves several components deployed on Azure, including a Virtual 
 - Workflow:
   - Updates the ARM template saved in azure storage account blob for Azure VM Windows deployment based on received information
   - Creates a template deployment using the updated ARM template, provisioning an Azure Windows VM with configured shutdown which will be activated 24 hours after the deployment
+  - Updates the SQL database with the provisioned VM name mapped to the user email
   - Sends an email to the user containing RDP login credentials once the VM is provisioned successfully
 
 ![Diagram](diagrams/diagram.png)
