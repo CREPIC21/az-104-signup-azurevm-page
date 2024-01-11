@@ -52,8 +52,10 @@
             "defaultValue": "adminuser"
         },
         "administratorLoginPassword": {
-            "type": "secureString",
-            "defaultValue": "Testpass1!"
+            "type": "securestring",
+            "metadata": {
+                "description": "Admin password"
+            }
         },
         "name": {
             "type": "string",
@@ -402,15 +404,6 @@
         "containerNameOutput": {
             "type": "string",
             "value": "[parameters('containerName')]"
-        },
-        "primaryConnectionString": {
-            "type": "string",
-            "value": "[listKeys(resourceId('Microsoft.ServiceBus/namespaces/AuthorizationRules', parameters('serviceBusName'), 'RootManageSharedAccessKey'), '2022-10-01-preview').primaryConnectionString]"
-
-        },
-        "queueName": {
-            "type": "string",
-            "value": "[parameters('serviceBusQueueName')]"
         }
     }
 }

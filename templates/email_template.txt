@@ -1,17 +1,14 @@
-Your Azure VM is Ready! -> SUBJECT
-
-
-BODY
-Hi {name},
+Hi @{body('Parse_JSON_-_service_bus_message')?['firstName']},
 
 Your Windows VM is ready.
 
-Use below credentials to login via RDP:
-- username: {username/email}
-- password: {password}
+Use below credentials to login via RDP connection:
+- VM IP Address:
+- username: @{variables('adminLoginUsername')}
+- password: @{variables('adminPassword')}
+
 
 For instructions on how to connect using RDP see below article:
-- How to login via RDP 
-https://learn.microsoft.com/en-us/azure/virtual-machines/windows/connect-rdp
+- How to login via RDP
 
-Your VM team 🚀
+Your VM team 🚀 

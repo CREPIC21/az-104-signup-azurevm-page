@@ -11,31 +11,31 @@
             "type": "String"
         },
         "publicIP_name": {
-            "defaultValue": "Ip-@{triggerBody()?['MessageId']}",
+            "defaultValue": "SignUpIp",
             "type": "String"
         },
         "nic_name": {
-            "defaultValue": "Nic-@{triggerBody()?['MessageId']}",
+            "defaultValue": "SignUpNic",
             "type": "String"
         },
         "vm_name": {
-            "defaultValue": "Vm-@{triggerBody()?['MessageId']}",
+            "defaultValue": "SignUpVm",
             "type": "String"
         },
         "vm_computerName": {
-            "defaultValue": "Vm-@{body('Parse_JSON_-_service_bus_message')?['firstName']}",
+            "defaultValue": "VmComputerName",
             "type": "String"
         },
         "vm_adminUsername": {
-            "defaultValue": "@{variables('adminLoginUsername')}",
+            "defaultValue": "SignUpAdmin",
             "type": "String"
         },
         "vm_adminPassword": {
-            "defaultValue": "@{variables('adminPassword')}",
+            "defaultValue": "SignUpPass01",
             "type": "String"
         },
         "vm_osDisk_name": {
-            "defaultValue": "OsDisk-@{triggerBody()?['MessageId']}",
+            "defaultValue": "SignUpOsDisk",
             "type": "String"
         }
     },
@@ -135,7 +135,7 @@
                 "status": "Enabled",
                 "taskType": "ComputeVmShutdownTask",
                 "dailyRecurrence": {
-                    "time": "@{formatDateTime(utcNow(), 'HH')}:00"
+                    "time": "19:00"
                 },
                 "timeZoneId": "Central European Standard Time",
                 "targetResourceId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('vm_name'))]",
@@ -148,9 +148,9 @@
         }
     ],
     "outputs": {
-        "vmIpAddress": {
+        "publicIPAddress": {
             "type": "string",
-            "value": "[reference(parameters('publicIP_name')).public]"
+            "value": "[reference(parameters('publicIP_name')).ipAddress]"
         }
     }
 }

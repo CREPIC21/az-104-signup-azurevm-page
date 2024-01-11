@@ -1,10 +1,7 @@
 $resourceGroupName = "SignUp-Rg"
 $location = "East US"
-$templateVnetSetup = "vnet_setup.json"
-$templateVnetParameters = "vnet_setup.parameters.json"
-
-$templateVMSetup = "vm.json"
-$templateStorageAccountSetup = "bus.json"
+$templateVnetSetup = "infrastructure.json"
+$templateVnetParameters = "infrastructure.parameters.json"
 
 # Azure Account Connection
 Connect-AzAccount
@@ -22,11 +19,10 @@ $storageAccount = Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Na
 $ctx = $storageAccount.Context
 
 # File to upload
-$localFilePath = "vm.json"
+$templateVMSetup = "vm.json"
 
 # Upload the file to the blob container
-Set-AzStorageBlobContent -File $localFilePath -Container $storageAccountNameContainer -Blob $blobName -Context $ctx -Force
-
+Set-AzStorageBlobContent -File $templateVMSetup -Container $storageAccountNameContainer -Blob $blobName -Context $ctx -Force
 
 
 ################################### FOR TESTING PURPOSES ONLY ########################################################
