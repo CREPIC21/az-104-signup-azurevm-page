@@ -1,1 +1,2 @@
-UPDATE SignUps SET VMName = 'vmName' WHERE Email = 'email'
+UPDATE SignUps SET VMName = 'vmName',VMNamePublicIp = 'publicIP' WHERE Email = 'email'
+UPDATE SignUps SET VMName = 'Vm-@{triggerBody()?['MessageId']}',VMNamePublicIp = '@{variables('publicIP')}' WHERE Email = '@{body('Parse_JSON')?['email']}';

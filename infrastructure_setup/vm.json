@@ -27,7 +27,7 @@
             "type": "String"
         },
         "vm_adminUsername": {
-            "defaultValue": "@{variables('adminLoginUsername')}",
+            "defaultValue": "@{variables('adminUsername')}",
             "type": "String"
         },
         "vm_adminPassword": {
@@ -150,7 +150,7 @@
     "outputs": {
         "vmIpAddress": {
             "type": "string",
-            "value": "[reference(parameters('publicIP_name')).public]"
+            "value": "[reference(parameters('publicIP_name')).ipAddress]"
         }
     }
 }
