@@ -22,7 +22,7 @@ The workflow involves several components deployed on Azure, including a Virtual 
   - Updates the SQL database with the provisioned VM name mapped to the user email
   - Sends an email to the user containing RDP login credentials once the VM is provisioned successfully
 
-![Diagram](diagrams/diagram.png)
+![Diagram](diagrams/infrastructure_diagram.png)
 
 ## Infrastructure as Code (IaC)
 - Leveraging ARM templates for deploying Azure resources
